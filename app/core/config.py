@@ -20,14 +20,20 @@ class Settings:
         self.ENVIRONMENT: str = os.getenv("ENVIRONMENT", "development")
         
         # Database Configuration
-        self.DB_USER: str = os.getenv("DB_USER", "root")
-        self.DB_PASSWORD: str = os.getenv("DB_PASSWORD", "secret")
-        self.DB_HOST: str = os.getenv("DB_HOST", "127.0.0.1")
-        self.DB_PORT: int = int(os.getenv("DB_PORT", "3306"))
-        self.DB_NAME: str = os.getenv("DB_NAME", "blackhawk")
+        # Priority: Use DATABASE_URL if provided (for Cloud Run), otherwise build from components
+        database_url_env = os.getenv("DATABASE_URL")
         
-        # Construct DATABASE_URL with encoded password
-        self.DATABASE_URL: str = self._build_database_url()
+        if database_url_env:
+            # Use the provided DATABASE_URL (Cloud Run, production)
+            self.DATABASE_URL: str = database_url_env
+        else:
+            # Build from individual components (local development)
+            self.DB_USER: str = os.getenv("DB_USER", "root")
+            self.DB_PASSWORD: str = os.getenv("DB_PASSWORD", "secret")
+            self.DB_HOST: str = os.getenv("DB_HOST", "127.0.0.1")
+            self.DB_PORT: int = int(os.getenv("DB_PORT", "3306"))
+            self.DB_NAME: str = os.getenv("DB_NAME", "blackhawk")
+            self.DATABASE_URL: str = self._build_database_url()
         
         # Security
         self.SECRET_KEY: str = os.getenv("SECRET_KEY", "somesecretkey")
@@ -83,10 +89,15 @@ class Settings:
         print("="*50)
         print(f"📦 Project: {self.PROJECT_NAME} v{self.PROJECT_VERSION}")
         print(f"🌍 Environment: {self.ENVIRONMENT}")
-        print(f"🗄️  Database: {self.DB_NAME}")
-        print(f"🔗 Host: {self.DB_HOST}:{self.DB_PORT}")
-        print(f"👤 User: {self.DB_USER}")
-        print(f"🔐 Password: {self.DB_PASSWORD}")
+        
+        # Show DATABASE_URL if provided directly, otherwise show components
+        if os.getenv("DATABASE_URL"):
+            print(f"🗄️  Database URL: {self.DATABASE_URL[:50]}...")  # Truncate for security
+        else:
+            print(f"🗄️  Database: {self.DB_NAME}")
+            print(f"🔗 Host: {self.DB_HOST}:{self.DB_PORT}")
+            print(f"👤 User: {self.DB_USER}")
+            print(f"🔐 Password: {self.DB_PASSWORD}")
         print("="*50 + "\n")
 
 

@@ -1,0 +1,17 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8001:8080"
+    environment:
+      - PORT=8080
+      - DATABASE_URL=mysql+pymysql://root:secret@123@host.docker.internal:3306/black_hawk
+      - PROJECT_NAME=Blackhawk Backend
+      - PROJECT_VERSION=1.0.0
+      - BACKEND_CORS_ORIGINS=*
+      - ENVIRONMENT=development
+    volumes:
+      - .:/app  # Mount code for hot reload (optional)
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8080 --reload

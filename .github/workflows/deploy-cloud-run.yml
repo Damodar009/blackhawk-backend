@@ -67,7 +67,6 @@ jobs:
             --max-instances=10 \
             --memory=512Mi \
             --cpu=1 \
-            --port=8000 \
             --timeout=300
 
       - name: Show deployment URL

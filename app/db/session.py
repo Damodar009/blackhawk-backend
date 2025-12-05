@@ -4,6 +4,7 @@ from typing import Generator
 from sqlalchemy import create_engine, event
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import scoped_session, sessionmaker
+from urllib.parse import quote_plus
 
 from app.core.config import get_settings
 
@@ -19,9 +20,17 @@ logging.getLogger("sqlalchemy.engine.Engine").setLevel(logging.WARNING)
 logging.getLogger("sqlalchemy.pool").setLevel(logging.WARNING)
 
 class DBSession:
-    """DB Session."""
+    """DB Session.""" 
     def __init__(self):
-        self.engine = create_engine(get_settings().DATABASE_URL, echo=False, pool_pre_ping=True)
+        settings = get_settings()
+        self.engine = create_engine(
+            settings.DATABASE_URL,
+            echo=False,
+            pool_pre_ping=True,
+            connect_args={
+                'ssl': {'ssl_disabled': True}  # Only if SSL is causing issues
+            }
+        )
 
     @event.listens_for(Engine, "before_cursor_execute")
     def before_cursor_execute(conn, cursor, statement, parameters, context, executemany):

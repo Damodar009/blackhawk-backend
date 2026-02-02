@@ -80,6 +80,7 @@ class Settings:
             f"mysql+pymysql://{self.DB_USER}:{encoded_password}"
             f"@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
         )
+        print("DATABASE_URL://///////////////////////////////////////////////",url)
         return url
     
     def _print_debug_info(self):

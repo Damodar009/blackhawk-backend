@@ -6,6 +6,7 @@ from app.api.v1.controllers import (
     post_bookmark_router,
     post_comment_router,
     comment_like_router,
+    auth_router,
 )
 from app.core import include_router
 
@@ -20,6 +21,7 @@ def get_routers(app: FastAPI):
         include_router(app, post_bookmark_router, 'post_bookmarks', "Post Bookmarks"),
         include_router(app, post_comment_router, 'post_comments', "Post Comments"),
         include_router(app, comment_like_router, 'comment_likes', "Comment Likes"),
+        include_router(app, auth_router, 'auth', "Auth"),
     ]
 
     return routers
